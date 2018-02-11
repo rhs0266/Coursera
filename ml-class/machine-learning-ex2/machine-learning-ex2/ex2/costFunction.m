@@ -25,6 +25,12 @@ for i=1:m
 end
 J = J / m;
 
+
+for j=2:n
+    J = J + lambda / (2 * m) * theta(j) * theta(j);
+end
+
+
 for j=1:size(theta)
     for i=1:m
         grad(j) = grad(j) + (hypothesis(theta,X(i,:)) - y(i)) * X(i,j);
