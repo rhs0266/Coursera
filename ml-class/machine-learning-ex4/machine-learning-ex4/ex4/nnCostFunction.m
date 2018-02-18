@@ -61,22 +61,41 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
-X = [ones(m, 1) X];
+D1 = zeros(size(Theta1));
+D2 = zeros(size(Theta2));
 for idx=1:m
-    yVec = (1:10) == y(idx);
-    z2 = Theta1 * X(idx,:)';
-    a2 = sigmoid(z2);
-    a2 = [1; a2];
+    yVec = ((1:num_labels) == y(idx))';
+    
+    a1 = X(idx, :)';
+    a1 = [1; a1];
+    
+    z2 = Theta1 * a1;
+    a2 = sigmoid(z2); % activation layer 2
+    a2 = [1; a2]; % add bias term
     
     z3 = Theta2 * a2;
     a3 = sigmoid(z3);
 
+    % calc cost
     for k=1:num_labels
         J = J + yVec(k) * log(a3(k)) + (1 - yVec(k)) * log(1 - a3(k));
     end
+    
+    % calc back prop
+    d3 = a3 - yVec;
+    d2 = (Theta2' * d3) .* sigmoidGradient([1; z2]);
+    d2 = d2(2:end); % delete bias term
+    
+    D2 = D2 + d3 * a2';
+    D1 = D1 + d2 * a1';
 end
+
 J = J * (-1/m) + (sum(sum(Theta1(:,2:end) .* Theta1(:,2:end))) + sum(sum(Theta2(:,2:end) .* Theta2(:,2:end)))) * lambda / 2 / m;
 
+temp_Theta1 = [zeros(size(Theta1,1),1) Theta1(:,2:end)];
+temp_Theta2 = [zeros(size(Theta2,1),1) Theta2(:,2:end)];
+Theta1_grad = D1 / m + lambda / m * temp_Theta1;
+Theta2_grad = D2 / m + lambda / m * temp_Theta2;
 
 % -------------------------------------------------------------
 

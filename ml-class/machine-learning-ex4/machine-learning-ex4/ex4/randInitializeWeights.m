@@ -19,13 +19,8 @@ W = zeros(L_out, 1 + L_in);
 % Note: The first column of W corresponds to the parameters for the bias unit
 %
 
-
-
-
-
-
-
-
+eps = 0.12;
+W = rand(L_out, 1 + L_in) * eps * 2 - eps;
 
 % =========================================================================
 
